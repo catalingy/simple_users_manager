@@ -3,9 +3,13 @@
 		
 		//Add new user
 		
-		public function add($user,$type,$pass,$name,$email,$phone,$descr)
+		public function add($user,$type,$pass,$name,$email,$phone,$descr,$age_cat)
 		{
-			
+			$query = $this->db->query('Select ID from age where category="'.$age_cat.'"');
+			foreach($query->result() as $row)
+			{    
+				$id_age_cat = $row->ID;
+			}
 			$query = $this->db->query('Select username from all_users where username="'.$user.'"');
 			if ($query->num_rows() == 1){
 				return "1"; //user already exists
@@ -16,7 +20,7 @@
 				{
 					$this->load->helper('security');
 					$passhash = do_hash($pass, 'md5');
-					$query = $this->db->query('INSERT INTO all_users(username,type,password,name,email,phone_number,description) VALUES("'.$user.'","'.$type.'","'.$passhash.'","'.$name.'","'.$email.'","'.$phone.'","'.$descr.'")');
+					$query = $this->db->query('INSERT INTO all_users(username,type,password,name,email,phone_number,description,age_id) VALUES("'.$user.'","'.$type.'","'.$passhash.'","'.$name.'","'.$email.'","'.$phone.'","'.$descr.'","'.$id_age_cat.'")');
 					return "2"; //user added succesfully
 				}
 				else
@@ -30,12 +34,17 @@
 		
 		//Edit user's information
 		
-		public function edit($user,$type,$pass,$name,$email,$phone,$descr)
+		public function edit($user,$type,$pass,$name,$email,$phone,$descr,$age_cat)
 		{
 			$this->load->helper('security');
+			$query = $this->db->query('Select ID from age where category="'.$age_cat.'"');
+			foreach($query->result() as $row)
+			{    
+				$id_age_cat = $row->ID;
+			}
 			if($pass=="")
 			{
-				$query = $this->db->query('UPDATE all_users SET type="'.$type.'", name="'.$name.'", email="'.$email.'", phone_number="'.$phone.'", description="'.$descr.'" WHERE username="'.$user.'"');
+				$query = $this->db->query('UPDATE all_users SET type="'.$type.'", name="'.$name.'", email="'.$email.'", phone_number="'.$phone.'", description="'.$descr.'", age_id="'.$id_age_cat.'" WHERE username="'.$user.'"');
 
 			}
 			else
@@ -44,7 +53,7 @@
 				{
 					$this->load->helper('security');
 					$passhash = do_hash($pass, 'md5');
-					$query = $this->db->query('UPDATE all_users SET type="'.$type.'", password="'.$passhash.'", name="'.$name.'", email="'.$email.'", phone_number="'.$phone.'", description="'.$descr.'" WHERE username="'.$user.'"');
+					$query = $this->db->query('UPDATE all_users SET type="'.$type.'", password="'.$passhash.'", name="'.$name.'", email="'.$email.'", phone_number="'.$phone.'", description="'.$descr.'", age_id="'.$id_age_cat.'" WHERE username="'.$user.'"');
 				}
 				else
 				{

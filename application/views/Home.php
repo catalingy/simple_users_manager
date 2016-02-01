@@ -21,17 +21,25 @@
 					<input type="text" class="form-control" name="user_filter" placeholder="Search">
 				</div>
 				<div class="navbar-form navbar-left">
-					<select  class="form-control" name="user_order" name = "edit_type"> <br>
+					<select  class="form-control" name="user_order"> <br>
 									<option value="ASC">Asc</option>
 									<option value="DESC">Desc</option>
 					</select>	
 				</div>
 				<div class="navbar-form navbar-left">
-					<select  class="form-control" name="user_type" name = "edit_type"> <br>
+					<select  class="form-control" name="user_type""> <br>
 									<option value="all">All</option>
 									<option value="u">User</option>
 									<option value="a">Admin</option>
 					</select>	
+				</div>
+				<div class="navbar-form navbar-left">
+					<select  class="form-control" name="users_age"> <br>
+					<option value="all">All</option>';
+					foreach(array_unique($ages) as $age_cat){
+						echo '<option value="'.$age_cat.'">'.$age_cat.'</option>';
+					}
+				echo '</select>	
 				</div>
 			</nav>'?>
 			<ul class="list-group" id="users_list">
@@ -42,7 +50,7 @@
 										data-toggle="popover" 
 										title="User\'s information" 
 										data-html = "true"
-										data-content="<p name=\'name_'.$user.'\'> Name: '.array_shift($name).' </p><p name=\'email_'.$user.'\'> Email :'.array_shift($email).' </p><p name=\'phone_'.$user.'\'> Phone no: '.array_shift($phone).'</p><p name=\'desc_'.$user.'\'> Description: '.array_shift($description).'</p>';
+										data-content="<p name=\'name_'.$user.'\'> Name: '.array_shift($name).' </p><p name=\'email_'.$user.'\'> Email :'.array_shift($email).' </p><p name=\'phone_'.$user.'\'> Phone no: '.array_shift($phone).'</p><p name=\'desc_'.$user.'\'> Description: '.array_shift($description).'</p><p name=\'age_'.$user.'\'> Age: '.array_shift($ages).'</p>';
 										if(array_shift($type) == 'a') echo '<p name=\'type_'.$user.'\'> Type: Admin </p>';
 										else echo '<p name=\'type_'.$user.'\'> Type: User </p>';
 										echo ' ">'.$user.'<button class="btn btn-info pull-right" data-toggle="modal" name="'.$user.'" id="usr_edit_btn" data-target="#edit_user"></button>
@@ -124,7 +132,7 @@
 							<label for = "exampleInputusername">Description</label><br>
 							<textarea cols=50 name="new_desc" required></textarea><br><br>
 							<label for = "exampleInputusername">Age category</label><br>
-							<input class="form-control" type = "text" placeholder = "Age" name = "new_age" readonly>
+							<input class="form-control" type = "text" placeholder = "Age" name = "new_age" required readonly>
 							<a class = "btn btn-info" href="#edit_age_modal" data-toggle="modal" >Edit</a><br><br>
 							<input type = "submit" class = "btn btn-primary" value = "Add user" >
 							<p id="new_user_message" class="text-center text-danger"></p>
@@ -144,8 +152,13 @@
 						<h4>Edit age categories</h4>
 					</div>
 					<div class = "modal-body">
-						<form id="edit_age_form">
-						</form>
+					<div id="edit_age_body">
+					</div><br><br>
+					<form id="add_new_age_form">
+						<label for = "exampleInputusername">Age category</label><br>
+						<input class="form-control" type = "text" placeholder = "Age" name ="add_new_age" required><br>
+						<input type="submit" class="btn btn-info" id="add_new_age_btn" value="Add new category"></input>
+					</form>
 					</div>
 					<div class = "modal-footer">
 						<a class = "btn btn-primary" id="hide_edit_age">Inchide</a>

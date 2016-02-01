@@ -20,7 +20,7 @@ $(document).ready(function(){
 });
 
 $('[name="user_filter"]').on('input propertychange',function(){
-	$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val()}).done(function(data){
+	$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val(),age_option: $('[name="users_age"]').val()}).done(function(data){
 		$('#users_list').html(data);
 		$('[data-toggle="popover"]').popover(options);  
 	});
@@ -49,23 +49,30 @@ $('[id="recpass_form"]').submit(function(){
 
 $('[id="add_user_form"]').submit(function(){
 	event.preventDefault();
-	$.post("Home/user_add",{user: $('[name="new_user"]').val(),type: $('[name="new_type"]').val(),password: $('[name="new_pass"]').val(),name: $('[name="new_name"]').val(), email: $('[name="new_email"]').val(), phone: $('[name="new_number"]').val(),desc: $('[name="new_desc"]').val()}).done(function(data1){
-		$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val()}).done(function(data){
-			if(data1 == '2'){
-				$('#new_user_message').html("User added succesfully!");
-				$('#users_list').html(data);
-				$('[data-toggle="popover"]').popover(options);  
-				setTimeout(function() { $('#add_new_user').modal('hide'); $('#new_user_message').html("");$('[id="add_user_form"]').trigger('reset') }, 2000);
-			}
-			if(data1 == "1"){
-				$('#new_user_message').html("User already exist! Try to change the Username!");
-			}
-			if(data1 == "7"){
-				$('#new_user_message').html("Password introduced needs to have uppercase letter/s and a symbol/s or number/s!");
-			}
+	if ($('[name="new_age"]').val() == "")
+	{
+		$('#new_user_message').html("Please fill in the Age category!");
+	}
+	else
+	{
+		$.post("Home/user_add",{user: $('[name="new_user"]').val(),type: $('[name="new_type"]').val(),password: $('[name="new_pass"]').val(),name: $('[name="new_name"]').val(),age_cat: $('[name="new_age"]').val(), email: $('[name="new_email"]').val(), phone: $('[name="new_number"]').val(),desc: $('[name="new_desc"]').val()}).done(function(data1){
+			$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val(),age_option: $('[name="users_age"]').val()}).done(function(data){
+				if(data1 == '2'){
+					$('#new_user_message').html("User added succesfully!");
+					$('#users_list').html(data);
+					$('[data-toggle="popover"]').popover(options);  
+					setTimeout(function() { $('#add_new_user').modal('hide'); $('#new_user_message').html("");$('[id="add_user_form"]').trigger('reset') }, 2000);
+				}
+				if(data1 == "1"){
+					$('#new_user_message').html("User already exist! Try to change the Username!");
+				}
+				if(data1 == "7"){
+					$('#new_user_message').html("Password introduced needs to have uppercase letter/s and a symbol/s or number/s!");
+				}
+			});
+		 
 		});
-     
-	});
+	}
      
 });
 
@@ -88,6 +95,8 @@ $(document).delegate('[id="usr_edit_btn"]',"click",function(){
 	$('[name="edit_phone"]').val(value.substr(11,value.length-11));
 	value = $('[name="desc_'+$(this).attr("name")+'"]').text();
 	$('[name="edit_desc"]').val(value.substr(14,value.length-14));
+	value = $('[name="age_'+$(this).attr("name")+'"]').text();
+	$('[name="edit_age"]').val(value.substr(6,value.length-6));
 	  
 });
 
@@ -95,8 +104,8 @@ $(document).delegate('[id="usr_edit_btn"]',"click",function(){
 
 $('[id="edit_user_form"]').submit(function(){
 	event.preventDefault();
-	$.post("Home/user_edit",{user: $('[name="edit_user"]').val(),type: $('[name="edit_type"]').val(),password: $('[name="edit_pass"]').val(),name: $('[name="edit_name"]').val(), email: $('[name="edit_email"]').val(), phone: $('[name="edit_phone"]').val(),desc: $('[name="edit_desc"]').val()}).done(function(data1){
-		$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val()}).done(function(data){
+	$.post("Home/user_edit",{user: $('[name="edit_user"]').val(),type: $('[name="edit_type"]').val(),password: $('[name="edit_pass"]').val(),name: $('[name="edit_name"]').val(), email: $('[name="edit_email"]').val(), phone: $('[name="edit_phone"]').val(),desc: $('[name="edit_desc"]').val(),age_cat: $('[name="edit_age"]').val()}).done(function(data1){
+		$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val(),age_option: $('[name="users_age"]').val()}).done(function(data){
 			if(data1 == '3'){
 				$('#edit_user_message').html("User information updated succesfully!");
 				$('#users_list').html(data);
@@ -118,7 +127,7 @@ $('[id="edit_user_form"]').submit(function(){
 
 $('[id="delete_user_btn"]').on("click",function(){
 		$.post("Home/delete_user",{user: $('[name="edit_user"]').val()}).done(function(data1){
-			$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val()}).done(function(data){
+			$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val(),age_option: $('[name="users_age"]').val()}).done(function(data){
 				if(data1 == '5'){
 					$('#edit_user_message').html("User deleted succesfully!");
 					$('#users_list').html(data);
@@ -135,7 +144,7 @@ $('[id="delete_user_btn"]').on("click",function(){
 //Order user on "user_order" change
 
 $('[name="user_order"]').on("change",function(){
-		$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val()}).done(function(data){
+		$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val(),age_option: $('[name="users_age"]').val()}).done(function(data){
 				$('#users_list').html(data);
 				$('[data-toggle="popover"]').popover(options);  
 		});      	  
@@ -144,7 +153,16 @@ $('[name="user_order"]').on("change",function(){
 //Filter users on "user_type" change
 
 $('[name="user_type"]').on("change",function(){
-		$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val()}).done(function(data){
+		$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val(),age_option: $('[name="users_age"]').val()}).done(function(data){
+				$('#users_list').html(data);
+				$('[data-toggle="popover"]').popover(options);  
+		});      	  
+});
+
+//Filter users on "users_age" change
+
+$('[name="users_age"]').on("change",function(){
+		$.post("Home/filter_user",{filter: $('[name="user_filter"]').val(),order: $('[name="user_order"]').val(), usr_type: $('[name="user_type"]').val(),age_option: $('[name="users_age"]').val()}).done(function(data){
 				$('#users_list').html(data);
 				$('[data-toggle="popover"]').popover(options);  
 		});      	  
@@ -155,4 +173,74 @@ $('[name="user_type"]').on("change",function(){
 $('[id="hide_edit_age"]').on("click",function(){
 		$('[id="edit_age_modal"]').modal("hide");  	
 		setTimeout(function(){ $("body").addClass("modal-open")}, 500);
+});
+
+//load data in edit_age_modal
+
+$('[id="edit_age_modal"]').on("shown.bs.modal",function(){
+		$.post("Home/load_age_cat",{}).done(function(data){
+				$('#edit_age_body').html(data);
+		}); ;
+});
+
+//add the age category when adding new user/editing user
+
+$('[id="edit_age_modal"]').on("shown.bs.modal",function(){
+		$.post("Home/load_age_cat",{}).done(function(data){
+				$('#edit_age_body').html(data);
+				$(document).delegate('[id="age_category"]',"click",function(){ 
+					if( $('#add_new_user').hasClass('in') ) {
+						$('[name="new_age"]').val($(this).attr("name"));	
+					}
+					else
+					{
+						if( $('#edit_age_modal').hasClass('in') ) {
+							$('[name="edit_age"]').val($(this).attr("name"));	
+						}
+					}
+					$('[id="edit_age_modal"]').modal("hide");
+					setTimeout(function(){ $("body").addClass("modal-open")}, 500);
+				});
+				$(document).delegate('[id="delete_age_cat"]',"click",function(){ 
+					$.post("Home/delete_age_cat",{age_cat: $(this).attr("name")}).done(function(data){
+						$.post("Home/load_age_cat",{}).done(function(data){
+								$('#edit_age_body').html(data);
+								$(document).delegate('[id="age_category"]',"click",function(){ 
+									if( $('#add_new_user').hasClass('in') ) {
+										$('[name="new_age"]').val($(this).attr("name"));	
+									}
+									if( $('#edit_age_modal').hasClass('in') ) {
+										$('[name="edit_age"]').val($(this).attr("name"));	
+									}
+									$('[id="edit_age_modal"]').modal("hide");
+									setTimeout(function(){ $("body").addClass("modal-open")}, 500);
+								});
+								$(document).delegate('[id="delete_age_cat"]',"click",function(){ 
+									$.post("Home/delete_age_cat",{age_cat: $(this).attr("name")}).done(function(data){
+									});
+									return false;
+								});
+								
+						});
+					});
+					return false;
+				});
+				
+		});
+});
+
+//adding new age category
+
+$('[id="add_new_age_btn"]').on("click",function(){
+	event.preventDefault();
+	if($('[name="add_new_age"]').val() != "")
+	{
+		$.post("Home/add_new_age_cat",{age_cat: $('[name="add_new_age"]').val()}).done(function(data){
+			$.post("Home/load_age_cat",{}).done(function(data){
+					$('#edit_age_body').html(data);
+					$('[id="add_new_age_form"]').trigger('reset');
+			});
+		});
+	}
+	
 });
