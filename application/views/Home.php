@@ -34,6 +34,7 @@
 					</select>	
 				</div>
 				<div class="navbar-form navbar-left">
+					Age categories: 
 					<select  class="form-control" name="users_age"> <br>
 					<option value="all">All</option>';
 					foreach(array_unique($ages) as $age_cat){
